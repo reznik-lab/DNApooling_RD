@@ -1,5 +1,5 @@
-rm(list=ls())
-setwd("/Users/dinatalr/Documents/MSKCC/rcc_translational/rcc_ith/analyses/scripts/final_code/")
+#rm(list=ls())
+#setwd("/Users/dinatalr/Documents/MSKCC/rcc_translational/rcc_ith/analyses/scripts/final_code/")
 
 
 #############################################################################
@@ -102,7 +102,7 @@ pkg_touse = c("readxl","dplyr","reshape2","ggplot2","cowplot",
 #################################################################
 
 #Cohort selection: 'renal' for RCC and 'lung' for NSCLC TRACERx cohorts
-cohort_select = "lung" ; {
+cohort_select = "renal" ; {
     if(tolower(cohort_select) == "renal"){maf = read.csv("ST4_MAF_TRACERx_RCC.csv",stringsAsFactors = F) ; cohort = "RCC"}
     if(tolower(cohort_select) == "lung"){maf = read.csv("ST5_MAF_TRACERx_NSCLC.csv",stringsAsFactors = F) ; cohort = "NSCLC"}
 
@@ -137,7 +137,7 @@ relative_outcomes = c("cost","cea_detection","cea_clonality","targets")
 #Bootstrapping parameters
 #Sample size: proportion of tumors to be selected (out of the total with that amount of regions available)
 sample_size = 0.7   
-iter_num = 100 #Number of iterations
+iter_num = 10 #Number of iterations
 max_region_num = 5 # Number of regions to include in the analysis (all possibilities from 1:max_region_num will be included)
 spec_region_num = 4 # Specifies the specific simulation where more detailed results will be shown (must be less than max_region_num)
 
