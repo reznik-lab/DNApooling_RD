@@ -219,7 +219,7 @@ system(paste("mkdir",output_path))
 
 
 #Read in the data and separate the multiregional from the pool samples
-maf = read.csv("ST1_MAF_DNApooling_experiment.csv",stringsAsFactors = F)
+maf = read.csv("ST2_MAF_DNApooling_experiment.csv",stringsAsFactors = F)
 
 mr = maf[maf$Seq_approach == "MR",]
     list.pats = split(mr, mr$patient_ID)   
