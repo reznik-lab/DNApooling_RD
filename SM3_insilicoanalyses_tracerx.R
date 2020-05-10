@@ -1,5 +1,3 @@
-#rm(list=ls())
-#setwd("/Users/dinatalr/Documents/MSKCC/rcc_translational/rcc_ith/analyses/scripts/final_code/")
 
 
 #############################################################################
