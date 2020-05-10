@@ -137,7 +137,7 @@ relative_outcomes = c("cost","cea_detection","cea_clonality","targets")
 #Bootstrapping parameters
 #Sample size: proportion of tumors to be selected (out of the total with that amount of regions available)
 sample_size = 0.7   
-iter_num = 10 #Number of iterations
+iter_num = 100 #Number of iterations
 max_region_num = 5 # Number of regions to include in the analysis (all possibilities from 1:max_region_num will be included)
 spec_region_num = 4 # Specifies the specific simulation where more detailed results will be shown (must be less than max_region_num)
 
@@ -765,8 +765,6 @@ details = list()
             return(res_eventlvl)})
           clonality_pool = sapply(strsplit(names(clonality_pool),split="\\.", fixed = F), function(x) x[2])
           
-          
-          
           resall = list('mutation_ID' = all_muts, 'tumor_ID'= rep(tumorid,length(all_muts)),
                         'tumor_ID_raw' = rep(tumor,length(all_muts)),
                        'Gene' = gene_events, 'regions' = rep(regions_chosen,length(all_muts)), 'OncoKB_evidencelvl' = evidence_targets[all_muts],
@@ -774,8 +772,6 @@ details = list()
                        'true_clonality' = clonality_truth, 'mr_clonality' = clonality_mr,'pool_clonality' = clonality_pool,
                        'pool_ccf' = ccf_pool, 'pool_pur' = pur_pool)
                           
-          
-          
           #RCC SUBTYPE ASSIGNMENT
           if(cohort == "RCC"){    
             pool_ccf_threshold = ifelse(region_num == 1, MR_threshold,POOL_threshold)
@@ -912,79 +908,74 @@ details = list()
         detected_pool = which(res_eventlvl$pool_detection == 1)
         
         
-  outcomes = list(
+        outcomes = list(
           
-        #DROPOUT RATE: proportion of mutations missed
-        dropout_eventlvl_mr =  1 - mean(res_eventlvl$mr_detection),
-        dropout_eventlvl_pool = 1 - mean(res_eventlvl$pool_detection),
-        
-        #Proportion of patients with at least 1 mutation missed
-        dropout_patientlvl_mr =  1 - mean(res_patientlvl$mr_detection),
-        dropout_patientlvl_pool = 1 - mean(res_patientlvl$pool_detection),
-        
-        #Proportion of patients with at least 1 mutation missed
-        dropoutdriver_patientlvl_mr =  1 - mean(res_patientlvl$mr_detectiondriver),
-        dropoutdriver_patientlvl_pool = 1 - mean(res_patientlvl$pool_detectiondriver),
-        
-        #Average dropout across tumors
-        dropoutmean_patientlvl_mr =  1 - mean(res_patientlvl$mr_detectionpertum),
-        dropoutmean_patientlvl_pool = 1 - mean(res_patientlvl$pool_detectionpertum),
+            #DROPOUT RATE: proportion of mutations missed
+            dropout_eventlvl_mr =  1 - mean(res_eventlvl$mr_detection, na.rm = T),
+            dropout_eventlvl_pool = 1 - mean(res_eventlvl$pool_detection, na.rm = T),
             
+            #Proportion of patients with at least 1 mutation missed
+            dropout_patientlvl_mr =  1 - mean(res_patientlvl$mr_detection, na.rm = T),
+            dropout_patientlvl_pool = 1 - mean(res_patientlvl$pool_detection, na.rm = T),
             
-        #CLONALITY ERROR RATE: proportion of incorrect clonality calls 
-        #Event level: out of the events detected (all calls - correct calls)
-        clonalityerror_eventlvl_mr = 1 - mean(ifelse(res_eventlvl$mr_clonality[detected_mr] == res_eventlvl$true_clonality[detected_mr],1,0)),
-        clonalityerror_eventlvl_pool = 1 - mean(ifelse(res_eventlvl$pool_clonality[detected_pool] == res_eventlvl$true_clonality[detected_pool],1,0)),
+            #Proportion of patients with at least 1 mutation missed
+            dropoutdriver_patientlvl_mr =  1 - mean(res_patientlvl$mr_detectiondriver, na.rm = T),
+            dropoutdriver_patientlvl_pool = 1 - mean(res_patientlvl$pool_detectiondriver, na.rm = T),
             
-        #Proportion of patients with at least 1 mutation misclassified in terms of clonality
-        clonalityerror_patientlvl_mr = 1 - mean(res_patientlvl$mr_clonality) ,
-        clonalityerror_patientlvl_pool = 1 - mean(res_patientlvl$pool_clonality),
-        
-        #Proportion of patients with at least 1 driver misclassified in terms of clonality
-        clonalityerrordriver_patientlvl_mr = 1 - mean(res_patientlvl$mr_clonalitydriver),
-        clonalityerrordriver_patientlvl_pool = 1 - mean(res_patientlvl$pool_clonalitydriver) ,
-        
-        #Average clonality error per tumor
-        clonalityerrormean_patientlvl_mr = 1 - mean(res_patientlvl$mr_clonalitypertum),
-        clonalityerrormean_patientlvl_pool = 1 - mean(res_patientlvl$pool_clonalitypertum),
+            #Average dropout across tumors
+            dropoutmean_patientlvl_mr =  1 - mean(res_patientlvl$mr_detectionpertum, na.rm = T),
+            dropoutmean_patientlvl_pool = 1 - mean(res_patientlvl$pool_detectionpertum, na.rm = T),
+                
+                
+            #CLONALITY ERROR RATE: proportion of incorrect clonality calls 
+            #Event level: out of the events detected (all calls - correct calls)
+            clonalityerror_eventlvl_mr = 1 - mean(ifelse(res_eventlvl$mr_clonality[detected_mr] == res_eventlvl$true_clonality[detected_mr],1,0), na.rm = T),
+            clonalityerror_eventlvl_pool = 1 - mean(ifelse(res_eventlvl$pool_clonality[detected_pool] == res_eventlvl$true_clonality[detected_pool],1,0), na.rm = T),
+                
+            #Proportion of patients with at least 1 mutation misclassified in terms of clonality
+            clonalityerror_patientlvl_mr = 1 - mean(res_patientlvl$mr_clonality, na.rm = T) ,
+            clonalityerror_patientlvl_pool = 1 - mean(res_patientlvl$pool_clonality, na.rm = T),
             
-       
-        #DETECTION OF TARGETABLE MUTATIONS: number of patients with at least one targetable mutation detected (with evidence equal to evidence_levels)
-        targets_mr = mean(res_patientlvl$mr_targets),
-        targets_pool = mean(res_patientlvl$pool_targets),
+            #Proportion of patients with at least 1 driver misclassified in terms of clonality
+            clonalityerrordriver_patientlvl_mr = 1 - mean(res_patientlvl$mr_clonalitydriver, na.rm = T),
+            clonalityerrordriver_patientlvl_pool = 1 - mean(res_patientlvl$pool_clonalitydriver, na.rm = T) ,
             
-        
-        #TMB UNDERESTIMATION (true - MR/POOL)/true
-        tmbunder_mr = mean((res_patientlvl$true_tmb - res_patientlvl$mr_tmb)/res_patientlvl$true_tmb),
-        tmbunder_pool = mean((res_patientlvl$true_tmb - res_patientlvl$pool_tmb)/res_patientlvl$true_tmb)
-        
-
-
-        )  
+            #Average clonality error per tumor
+            clonalityerrormean_patientlvl_mr = 1 - mean(res_patientlvl$mr_clonalitypertum, na.rm = T),
+            clonalityerrormean_patientlvl_pool = 1 - mean(res_patientlvl$pool_clonalitypertum, na.rm = T),
+                
+           
+            #DETECTION OF TARGETABLE MUTATIONS: number of patients with at least one targetable mutation detected (with evidence equal to evidence_levels)
+            targets_mr = mean(res_patientlvl$mr_targets, na.rm = T),
+            targets_pool = mean(res_patientlvl$pool_targets, na.rm = T),
+                
+            
+            #TMB UNDERESTIMATION (true - MR/POOL)/true
+            tmbunder_mr = mean((res_patientlvl$true_tmb - res_patientlvl$mr_tmb)/res_patientlvl$true_tmb, na.rm = T),
+            tmbunder_pool = mean((res_patientlvl$true_tmb - res_patientlvl$pool_tmb)/res_patientlvl$true_tmb, na.rm = T))  
   
-        #COSTS
-  cost_sampleprep = costs$cost_prep_persample*(1+region_num) # sample prepping cost is the same for MR and POOL approaches
-        outcomes$cost_mr =  costs$cost_overhead + cost_sampleprep + costs$cost_seq*(1+region_num) # 1 normal sample + number of tumor samples
-        outcomes$cost_pool = costs$cost_overhead + cost_sampleprep + costs$cost_seq*2# 1 normal sample + 1 pool
-        #Cost-effectiveness measures (CE = outcome/cost)
-        outcomes$cea_detection_mr = (1-outcomes$dropout_eventlvl_mr)/outcomes$cost_mr
-        outcomes$cea_detection_pool = (1-outcomes$dropout_eventlvl_pool)/outcomes$cost_pool
-        outcomes$cea_clonality_mr = (1-outcomes$clonalityerror_eventlvl_mr)/outcomes$cost_mr
-        outcomes$cea_clonality_pool = (1-outcomes$clonalityerror_eventlvl_pool)/outcomes$cost_pool
-  
+            #COSTS
+            cost_sampleprep = costs$cost_prep_persample*(1+region_num) # sample prepping cost is the same for MR and POOL approaches
+                outcomes$cost_mr =  costs$cost_overhead + cost_sampleprep + costs$cost_seq*(1+region_num) # 1 normal sample + number of tumor samples
+                outcomes$cost_pool = costs$cost_overhead + cost_sampleprep + costs$cost_seq*2# 1 normal sample + 1 pool
+            #Cost-effectiveness measures (CE = outcome/cost)
+            outcomes$cea_detection_mr = (1-outcomes$dropoutmean_patientlvl_mr)/outcomes$cost_mr
+                  outcomes$cea_detection_pool = (1-outcomes$dropoutmean_patientlvl_pool)/outcomes$cost_pool
+                  outcomes$cea_clonality_mr = (1-outcomes$clonalityerrormean_patientlvl_mr)/outcomes$cost_mr
+                  outcomes$cea_clonality_pool = (1-outcomes$clonalityerrormean_patientlvl_pool)/outcomes$cost_pool
 
-        # ADDITIONAL RCC-SPECIFIC OUTCOMES
-        if(cohort == "RCC"){
-            # RISK ERROR
-            outcomes$rccriskerror_mr = 1 - mean(res_patientlvl$mr_riskrcc,na.rm = T) 
-            outcomes$rccriskerror_pool = 1 - mean(res_patientlvl$pool_riskrcc,na.rm = T) 
+            # ADDITIONAL RCC-SPECIFIC OUTCOMES
+            if(cohort == "RCC"){
+                # RISK ERROR
+                outcomes$rccriskerror_mr = 1 - mean(res_patientlvl$mr_riskrcc,na.rm = T) 
+                outcomes$rccriskerror_pool = 1 - mean(res_patientlvl$pool_riskrcc,na.rm = T) 
+                
+                #CORRECT SUBTYPE ASSIGNMENT
+                outcomes$rccsubtype_mr = mean(res_patientlvl$mr_subtypercc, na.rm = T)
+                outcomes$rccsubtype_pool = mean(res_patientlvl$pool_subtypercc, na.rm = T)}
+    
+            outcomes = unlist(outcomes)
             
-            #CORRECT SUBTYPE ASSIGNMENT
-            outcomes$rccsubtype_mr = mean(res_patientlvl$mr_subtypercc)
-            outcomes$rccsubtype_pool = mean(res_patientlvl$pool_subtypercc)}
-
-        outcomes = unlist(outcomes)
-        
       
       
     
