@@ -66,8 +66,8 @@ Results are provided in the form of graphs (PDF format) as well as a table (CSV 
 
 1) The mutation-annotation files (MAF) of the TRACERx RCC and NSCLC cohorts. 
     This data consists of multiregional somatic variant data from next-generation sequencing assays
-     - RCC cohort - consists of targeted panel sequencing (XXX genes), 
-     - NSCLC cohort - whole-exome sequencing data (XXXXX genes)
+     - RCC cohort - consists of targeted panel sequencing, 
+     - NSCLC cohort - whole-exome sequencing data
 
      Mandatory columns: Hugo_Symbol, Tumor_Sample_Barcode, CCF (cancer-cell fraction), Purity, patient_ID, cohort, OncoKB_evidencelvl, mutation_ID (in the format GENE_Ch:StartPosition:Reference_Allele;PATIENTID), mutation_ID_region (in the format GENE_Ch:StartPosition:Reference_Allele;SAMPLEID)
 
